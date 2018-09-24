@@ -1,6 +1,7 @@
 package com.github.scrobot.audiovisualizer;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
@@ -38,6 +39,9 @@ public class PlayerVisualizerView extends View {
     private int width;
     private int height;
 
+    private int playedStateColor;
+    private int nonPlayedStateColor;
+
     public PlayerVisualizerView(Context context) {
         super(context);
         init();
@@ -45,6 +49,16 @@ public class PlayerVisualizerView extends View {
 
     public PlayerVisualizerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+
+        TypedArray a = context.obtainStyledAttributes(attrs,
+                R.styleable.PlayerVisualizerView, 0, 0);
+        playedStateColor = a.getColor(R.styleable.PlayerVisualizerView_statePlayingColor,
+                ContextCompat.getColor(context, R.color.gray));
+        nonPlayedStateColor = a.getColor(R.styleable.PlayerVisualizerView_stateNonPlayingColor,
+                ContextCompat.getColor(context, R.color.black));
+
+        a.recycle();
+
         init();
     }
 
@@ -53,10 +67,10 @@ public class PlayerVisualizerView extends View {
 
         playedStatePainting.setStrokeWidth(1f);
         playedStatePainting.setAntiAlias(true);
-        playedStatePainting.setColor(ContextCompat.getColor(getContext(), R.color.gray));
+        playedStatePainting.setColor(playedStateColor);
         notPlayedStatePainting.setStrokeWidth(1f);
         notPlayedStatePainting.setAntiAlias(true);
-        notPlayedStatePainting.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+        notPlayedStatePainting.setColor(nonPlayedStateColor);
     }
 
     /**
