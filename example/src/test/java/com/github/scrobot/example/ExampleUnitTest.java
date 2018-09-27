@@ -1,4 +1,4 @@
-package com.github.scrobot.audiovisualizer;
+package com.github.scrobot.example;
 
 import org.junit.Test;
 
