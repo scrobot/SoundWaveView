@@ -198,9 +198,9 @@ public class SoundVisualizerBarView extends View {
             }
 
             for (int b = 0; b < drawBarCount; b++) {
-                float left = barNum * dp(3);
+                float left = barNum * dp(4);
                 float top = y + dp(VISUALIZER_HEIGHT - Math.max(1, VISUALIZER_HEIGHT * value / 31.0f));
-                float right = left + dp(2);
+                float right = left + dp(3);
                 float bottom = y + dp(VISUALIZER_HEIGHT);
                 if (left < denseness && left + dp(2) < denseness) {
                     canvas.drawRect(left, top, right, bottom, notPlayedStatePainting);

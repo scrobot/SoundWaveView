@@ -15,12 +15,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         final SoundWaveView view = findViewById(R.id.vWaveView);
 
         Uri uri = Uri.parse("android.resource://"+getPackageName()+"/raw/audio_sample");
