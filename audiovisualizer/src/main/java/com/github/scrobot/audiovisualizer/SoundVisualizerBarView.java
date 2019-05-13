@@ -4,12 +4,24 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+
+import androidx.annotation.ColorRes;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class PlayerVisualizerView extends View {
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+public class SoundVisualizerBarView extends View {
 
     /**
      * constant value for Height of the bar
@@ -42,24 +54,36 @@ public class PlayerVisualizerView extends View {
     private int playedStateColor;
     private int nonPlayedStateColor;
 
-    public PlayerVisualizerView(Context context) {
+    private final Context context;
+
+    public SoundVisualizerBarView(Context context) {
         super(context);
+        this.context = context;
         init();
     }
 
-    public PlayerVisualizerView(Context context, @Nullable AttributeSet attrs) {
+    public SoundVisualizerBarView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
 
         TypedArray a = context.obtainStyledAttributes(attrs,
-                R.styleable.PlayerVisualizerView, 0, 0);
-        playedStateColor = a.getColor(R.styleable.PlayerVisualizerView_statePlayingColor,
+                R.styleable.SoundVisualizerBarView, 0, 0);
+        playedStateColor = a.getColor(R.styleable.SoundVisualizerBarView_statePlayingColor,
                 ContextCompat.getColor(context, R.color.gray));
-        nonPlayedStateColor = a.getColor(R.styleable.PlayerVisualizerView_stateNonPlayingColor,
+        nonPlayedStateColor = a.getColor(R.styleable.SoundVisualizerBarView_stateNonPlayingColor,
                 ContextCompat.getColor(context, R.color.black));
 
         a.recycle();
 
         init();
+    }
+
+    public void setPlayedStateColor(@ColorRes int playedStateColor) {
+        this.playedStateColor = playedStateColor;
+    }
+
+    public void setNonPlayedStateColor(@ColorRes int nonPlayedStateColor) {
+        this.nonPlayedStateColor = nonPlayedStateColor;
     }
 
     private void init() {
@@ -71,6 +95,32 @@ public class PlayerVisualizerView extends View {
         notPlayedStatePainting.setStrokeWidth(1f);
         notPlayedStatePainting.setAntiAlias(true);
         notPlayedStatePainting.setColor(nonPlayedStateColor);
+    }
+
+    /**
+     * update and redraw Visualizer view
+     */
+    public void updateVisualizer(Uri uri) throws FileNotFoundException {
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+        updateVisualizer(inputStream);
+    }
+
+    /**
+     * update and redraw Visualizer view
+     */
+    public void updateVisualizer(String url) throws IOException {
+        URLConnection connection = new URL("url of your .mp3 file").openConnection();
+        connection.connect();
+
+        updateVisualizer(connection.getInputStream());
+    }
+
+    /**
+     * update and redraw Visualizer view
+     */
+    public void updateVisualizer(InputStream inputStream) {
+        this.bytes = readInputStream(inputStream);
+        invalidate();
     }
 
     /**
@@ -148,16 +198,15 @@ public class PlayerVisualizerView extends View {
             }
 
             for (int b = 0; b < drawBarCount; b++) {
-                int x = barNum * dp(3);
-                float left = x;
+                float left = barNum * dp(3);
                 float top = y + dp(VISUALIZER_HEIGHT - Math.max(1, VISUALIZER_HEIGHT * value / 31.0f));
-                float right = x + dp(2);
+                float right = left + dp(2);
                 float bottom = y + dp(VISUALIZER_HEIGHT);
-                if (x < denseness && x + dp(2) < denseness) {
+                if (left < denseness && left + dp(2) < denseness) {
                     canvas.drawRect(left, top, right, bottom, notPlayedStatePainting);
                 } else {
                     canvas.drawRect(left, top, right, bottom, playedStatePainting);
-                    if (x < denseness) {
+                    if (left < denseness) {
                         canvas.drawRect(left, top, right, bottom, notPlayedStatePainting);
                     }
                 }
@@ -171,6 +220,23 @@ public class PlayerVisualizerView extends View {
             return 0;
         }
         return (int) Math.ceil(getContext().getResources().getDisplayMetrics().density * value);
+    }
+
+    private byte[] readInputStream(InputStream inputStream) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        byte buf[] = new byte[1024];
+        int len;
+        try {
+            while ((len = inputStream.read(buf)) != -1) {
+                outputStream.write(buf, 0, len);
+            }
+            outputStream.close();
+            inputStream.close();
+        } catch (IOException e) {
+
+        }
+        return outputStream.toByteArray();
     }
 
 }
