@@ -25,36 +25,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-//        soundVisualizerBarView.updateVisualizer(readTextFile(XmlFileInputStream));
-
-//        Observable.interval(100, TimeUnit.MILLISECONDS)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeOn(Schedulers.io())
-//                .subscribe(new Consumer<Long>() {
-//                    @Override
-//                    public void accept(Long aLong) throws Exception {
-//                        soundVisualizerBarView.updatePlayerPercent(aLong.floatValue() / 100f);
-//                    }
-//                }, new Consumer<Throwable>() {
-//                    @Override
-//                    public void accept(Throwable throwable) throws Exception {
-//                        throwable.printStackTrace();
-//                    }
-//                });
-//
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(mediaPlayer.isPlaying()) {
-//                    button.setText("Play");
-//                    mediaPlayer.stop();
-//                } else {
-//                    button.setText("Stop");
-//                    mediaPlayer.start();
-//                }
-//            }
-//        });
-
     }
 
 }
